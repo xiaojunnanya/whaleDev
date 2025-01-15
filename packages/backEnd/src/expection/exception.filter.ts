@@ -3,43 +3,63 @@ import {
   Catch,
   ArgumentsHost,
   HttpException,
+  Logger,
 } from '@nestjs/common'
 import { Response } from 'express'
 import { formatDate } from '@/utils'
 import { customCode, responseType } from '@/type'
+import { ResultUtil } from '@/common/ResultUtil';
+import { ErrorCode } from '@/common/ErrorCode';
+import { BusinessException } from '@/expection/business.exception'
 
-// 捕获异常
+/**
+ * 全局异常处理器
+ */
 @Catch()
-export default class AllExceptionsFilter implements ExceptionFilter {
-  catch(exception: HttpException, host: ArgumentsHost) {
+export default class GlobalExceptionFilter implements ExceptionFilter {
+
+  private readonly logger = new Logger(GlobalExceptionFilter.name);
+
+  catch(exception: any, host: ArgumentsHost) {
     const ctx = host.switchToHttp()
-    const res = ctx.getResponse<Response>()
-    console.log(exception, 'exception')
-    // 处理 class-validator 的异常兼容
-    const validatorErr =
-      exception instanceof HttpException &&
-      typeof exception.getResponse === 'function'
-        ? (exception.getResponse() as { message: string[] }).message
-        : null
+    const response = ctx.getResponse<Response>()
 
-    const message = validatorErr?.join
-      ? validatorErr.join(',')
-      : exception.message || customCode[98]
+    this.logger.error('Exception caught:', {
+      type: exception.constructor.name,
+      message: exception.message,
+      stack: exception.stack,
+    });
 
-    const code =
-      exception instanceof HttpException ? exception.getStatus() : 500 // 非 HttpException，默认为 500
+    let res;
+    if (exception instanceof BusinessException) {
+      const response = exception.getResponse() as any;
+      res = response;
+    } else if (exception instanceof HttpException) {
+      const validatorErr =
+        typeof exception.getResponse === 'function'
+          ? (exception.getResponse() as { message: string[] }).message
+          : null;
 
-    const errorResponse = {
-      code: code,
-      timestamp: formatDate(),
-      data: {
-        data: null,
+      const message = validatorErr?.join
+        ? validatorErr.join(',')
+        : exception.message;
+
+      res = {
+        code: exception.getStatus(),
         message,
-        msgType: 'error',
-      },
-      type: 'system',
+        data: null,
+        msgType: 'error'
+      };
+    } else {
+      res = {
+        code: ErrorCode.SYSTEM_ERROR.code,
+        message: exception.message || '系统错误',
+        data: null,
+        msgType: 'error'
+      };
     }
 
-    res.status(code).json(errorResponse)
+    this.logger.debug('Response:', res);
+    response.status(200).json(res);
   }
 }

@@ -49,8 +49,7 @@ enum ProjectState {
 
 // 用户表
 model user{
-  id Int @id @default(autoincrement())
-  user_id String @unique
+  user_id String @id @unique
   email String @unique
   password String
   username String? @default("鲸灵开发用户")
@@ -58,6 +57,8 @@ model user{
   created_time DateTime @default(dbgenerated("NOW()")) @db.DateTime
   updated_time DateTime @default(dbgenerated("NOW() ON UPDATE NOW()")) @db.DateTime
   status Int @default(0) // 0:正常 1:封禁
+
+  @@index([email])
 }
 
 // 项目表
@@ -73,9 +74,8 @@ model project{
   updated_time DateTime @default(dbgenerated("NOW() ON UPDATE NOW()")) @db.DateTime
   status Int @default(0) // 0:正常 1:删除
 
-
-  // 添加的关系字段
-  pages pages[] @relation("project_pages") // 定义一对多关系
+  @@index([user_id])
+  @@index([project_id])
 }
 
 model pages{
@@ -88,9 +88,8 @@ model pages{
   updated_time DateTime @default(dbgenerated("NOW() ON UPDATE NOW()")) @db.DateTime
   status Int @default(0) // 0:正常 1:删除
 
-  // 添加的关系字段
-  project project @relation("project_pages", fields: [project_id], references: [project_id])
-  page_json page_json? @relation("page_json_pages")
+  @@index([project_id])
+  @@index([page_id])
 }
 
 
@@ -102,6 +101,5 @@ model page_json{
   updated_time DateTime @default(dbgenerated("NOW() ON UPDATE NOW()")) @db.DateTime
 
   status Int @default(0) // 0:正常 1:删除
-  // 反向关系，page_id 为外键，指向 pages 表的 page_id
-  pages pages @relation("page_json_pages", fields: [page_id], references: [page_id])
+  @@index([page_id])
 }
