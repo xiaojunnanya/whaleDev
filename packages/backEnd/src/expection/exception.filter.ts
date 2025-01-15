@@ -8,8 +8,8 @@ import {
 import { Response } from 'express'
 import { formatDate } from '@/utils'
 import { customCode, responseType } from '@/type'
-import { ResultUtil } from '@/common/ResultUtil';
-import { ErrorCode } from '@/common/ErrorCode';
+import { ResultUtil } from '@/common/ResultUtil'
+import { ErrorCode } from '@/common/ErrorCode'
 import { BusinessException } from '@/expection/business.exception'
 
 /**
@@ -17,8 +17,7 @@ import { BusinessException } from '@/expection/business.exception'
  */
 @Catch()
 export default class GlobalExceptionFilter implements ExceptionFilter {
-
-  private readonly logger = new Logger(GlobalExceptionFilter.name);
+  private readonly logger = new Logger(GlobalExceptionFilter.name)
 
   catch(exception: any, host: ArgumentsHost) {
     const ctx = host.switchToHttp()
@@ -28,38 +27,38 @@ export default class GlobalExceptionFilter implements ExceptionFilter {
       type: exception.constructor.name,
       message: exception.message,
       stack: exception.stack,
-    });
+    })
 
-    let res;
+    let res
     if (exception instanceof BusinessException) {
-      const response = exception.getResponse() as any;
-      res = response;
+      const response = exception.getResponse() as any
+      res = response
     } else if (exception instanceof HttpException) {
       const validatorErr =
         typeof exception.getResponse === 'function'
           ? (exception.getResponse() as { message: string[] }).message
-          : null;
+          : null
 
       const message = validatorErr?.join
         ? validatorErr.join(',')
-        : exception.message;
+        : exception.message
 
       res = {
         code: exception.getStatus(),
         message,
         data: null,
-        msgType: 'error'
-      };
+        msgType: 'error',
+      }
     } else {
       res = {
         code: ErrorCode.SYSTEM_ERROR.code,
         message: exception.message || '系统错误',
         data: null,
-        msgType: 'error'
-      };
+        msgType: 'error',
+      }
     }
 
-    this.logger.debug('Response:', res);
-    response.status(200).json(res);
+    this.logger.debug('Response:', res)
+    response.status(200).json(res)
   }
 }

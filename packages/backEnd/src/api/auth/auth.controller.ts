@@ -12,21 +12,30 @@ export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Post('email_code')
-  async sendEmailCode(@Body() emailCode: EmailCodeDto): Promise<BaseResponse<String>>{
-    return await this.authService.sendEmailCode(emailCode);
+  async sendEmailCode(
+    @Body() emailCode: EmailCodeDto,
+  ): Promise<BaseResponse<String>> {
+    return await this.authService.sendEmailCode(emailCode)
   }
 
   @Post('register')
   register(@Body() registerDto: RegisterOrForgetDto) {
     const { password, confirmPassword } = registerDto
-    ThrowUtil.throwByMessageIf(password !== confirmPassword, ErrorCode.PARAMS_ERROR, "两次密码不一致");
+    ThrowUtil.throwByMessageIf(
+      password !== confirmPassword,
+      ErrorCode.PARAMS_ERROR,
+      '两次密码不一致',
+    )
     return this.authService.registerOrForget(registerDto, 'register')
   }
 
   @Post('forget')
   forget(@Body() forgetDto: RegisterOrForgetDto) {
-    const { password, confirmPassword } = forgetDto;
-    ThrowUtil.throwByErrorCodeIf(password !== confirmPassword, ErrorCode.PARAMS_ERROR);
+    const { password, confirmPassword } = forgetDto
+    ThrowUtil.throwByErrorCodeIf(
+      password !== confirmPassword,
+      ErrorCode.PARAMS_ERROR,
+    )
     return this.authService.registerOrForget(forgetDto, 'forget')
   }
 

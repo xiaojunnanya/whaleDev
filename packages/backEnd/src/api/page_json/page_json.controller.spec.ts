@@ -1,20 +1,20 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { PageJsonController } from './page_json.controller';
-import { PageJsonService } from './page_json.service';
+import { Test, TestingModule } from '@nestjs/testing'
+import { PageJsonController } from './page_json.controller'
+import { PageJsonService } from './page_json.service'
 
 describe('PageJsonController', () => {
-  let controller: PageJsonController;
+  let controller: PageJsonController
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [PageJsonController],
       providers: [PageJsonService],
-    }).compile();
+    }).compile()
 
-    controller = module.get<PageJsonController>(PageJsonController);
-  });
+    controller = module.get<PageJsonController>(PageJsonController)
+  })
 
   it('should be defined', () => {
-    expect(controller).toBeDefined();
-  });
-});
+    expect(controller).toBeDefined()
+  })
+})

@@ -2,7 +2,6 @@
 export const EMAIL_USER = 'xxx' // 邮箱
 export const EMAIL_PASS = 'xxx' // 邮箱密钥
 
-
 // 用户信息
 export const AUTHOR = {
   NAME: 'xxx', // 用户名

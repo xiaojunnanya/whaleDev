@@ -4,7 +4,7 @@ import { createTransport, Transporter } from 'nodemailer'
 import * as fs from 'fs'
 import * as ejs from 'ejs'
 import * as svgCaptcha from 'svg-captcha'
-import { AUTHOR, EMAIL_PASS, EMAIL_USER } from '@/config/index-gitignore';
+import { AUTHOR, EMAIL_PASS, EMAIL_USER } from '@/config/index-gitignore'
 import { v4 as uuidv4 } from 'uuid'
 import { codeType } from './type/index.type'
 import { JwtService } from '@nestjs/jwt'
@@ -66,29 +66,35 @@ export class AuthService {
         html: emailHtml,
       })
     } catch (error) {
-      throw new BusinessException(ErrorCode.SYSTEM_ERROR.code, '邮件发送失败');
+      throw new BusinessException(ErrorCode.SYSTEM_ERROR.code, '邮件发送失败')
     }
   }
 
   // 发送验证码
   async sendEmailCode(emailCode: EmailCodeDto) {
-    const { type, email } = emailCode;
-    const code: string = Math.random().toString().slice(2, 8);
+    const { type, email } = emailCode
+    const code: string = Math.random().toString().slice(2, 8)
 
-    const msg = await this.prisma.user.findUnique({ where: { email } });
+    const msg = await this.prisma.user.findUnique({ where: { email } })
 
     if (type === 'register' && msg) {
-      throw new BusinessException(ErrorCode.PARAMS_ERROR.code, '当前邮箱已注册，请直接登录');
+      throw new BusinessException(
+        ErrorCode.PARAMS_ERROR.code,
+        '当前邮箱已注册，请直接登录',
+      )
     }
 
     if (type === 'forget' && !msg) {
-      throw new BusinessException(ErrorCode.PARAMS_ERROR.code, '当前邮箱未注册，请先注册');
+      throw new BusinessException(
+        ErrorCode.PARAMS_ERROR.code,
+        '当前邮箱未注册，请先注册',
+      )
     }
 
-    await this.sendEmailCodeFun(emailCode, code);
-    await this.redisUtil.setex(email, code, this.validity * 60);
+    await this.sendEmailCodeFun(emailCode, code)
+    await this.redisUtil.setex(email, code, this.validity * 60)
 
-    return ResultUtil.success('发送成功，请注意查收您的邮箱');
+    return ResultUtil.success('发送成功，请注意查收您的邮箱')
   }
 
   // 注册和忘记密码
@@ -102,12 +108,15 @@ export class AuthService {
         type === 'register'
           ? '当前邮箱已注册，请直接登录'
           : '当前邮箱未注册，请先注册'
-      return ResultUtil.success(message, 'info');
+      return ResultUtil.success(message, 'info')
     }
 
     const redisCode = await this.redisUtil.get(email)
     if (!redisCode || redisCode !== emailCode)
-      throw new BusinessException(ErrorCode.PARAMS_ERROR.code, '验证码错误或已过期，请重新发送');
+      throw new BusinessException(
+        ErrorCode.PARAMS_ERROR.code,
+        '验证码错误或已过期，请重新发送',
+      )
 
     // 遗留的问题：图形验证码 code 的验证
 
@@ -134,9 +143,9 @@ export class AuthService {
     }
 
     // 删除图形验证码
-    await this.redisUtil.delete(email);
+    await this.redisUtil.delete(email)
 
-    return ResultUtil.success(returnMsg, 'success');
+    return ResultUtil.success(returnMsg, 'success')
   }
 
   // 登录
@@ -145,16 +154,16 @@ export class AuthService {
 
     const userRes = await this.prisma.user.findUnique({ where: { email } })
 
-    if (!userRes) throw new BusinessException(0, '当前邮箱未注册，请先注册');
+    if (!userRes) throw new BusinessException(0, '当前邮箱未注册，请先注册')
 
     if (userRes.password !== password)
-      throw new BusinessException(ErrorCode.OPERATION_ERROR.code, '密码错误');
+      throw new BusinessException(ErrorCode.OPERATION_ERROR.code, '密码错误')
 
     const token = this.jwtService.sign({
       user_id: userRes.user_id,
-    });
+    })
 
-    this.redisComment.saveUserInfo(token, userRes);
+    this.redisComment.saveUserInfo(token, userRes)
 
     // 遗留的问题：token无感刷新
 
