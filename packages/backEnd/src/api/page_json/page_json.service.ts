@@ -35,11 +35,11 @@ export class PageJsonService {
     const data = await this.prisma.page_json.findUnique({
       where: {
         page_id,
-        pages: {
-          project: {
-            user_id: this.store.get('user_id'),
-          },
-        },
+        // pages: {
+        //   project: {
+        //     user_id: this.store.get('user_id'),
+        //   },
+        // },
       },
     })
 

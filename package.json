@@ -1,26 +1,26 @@
 {
-  "name": "whaledev",
-  "version": "1.0.0",
-  "description": "鲸灵开发",
-  "scripts": {
-    "push": "github.sh",
-    "start:front": "npm --prefix ./packages/frontEnd run dev",
-    "start:back": "npm --prefix ./packages/backEnd run start:dev",
-    "create": "npm --prefix ./packages/backEnd run create",
-    "start:doc": "npm --prefix ./packages/document run docs:dev",
-    "start": "concurrently -n \"front,back,docs\" -c \"magenta,cyan,black\" \"npm run start:front\" \"npm run start:back\" \"npm run start:doc\"",
-    "start:db": "npm --prefix ./packages/backEnd run mysql:init"
-  },
-  "author": "鲸落",
-  "license": "ISC",
-  "workspaces": [
-    "packages/*"
-  ],
-  "devDependencies": {
-    "@commitlint/cli": "^19.5.0",
-    "@commitlint/config-conventional": "^19.5.0",
-    "concurrently": "^9.0.1",
-    "husky": "^9.1.6",
-    "lerna": "^8.1.8"
-  }
+    "name": "whaledev",
+    "version": "1.0.0",
+    "description": "鲸灵开发",
+    "scripts": {
+        "push": "github.sh",
+        "start:front": "npm --prefix ./packages/frontEnd run dev",
+        "start:back": "npm --prefix ./packages/backEnd run start:dev",
+        "create": "npm --prefix ./packages/backEnd run create",
+        "start:doc": "npm --prefix ./packages/document run docs:dev",
+        "start": "concurrently -n \"front,back,docs\" -c \"magenta,cyan,black\" \"npm run start:front\" \"npm run start:back\" \"npm run start:doc\"",
+        "start:db": "npm --prefix ./packages/backEnd run mysql:init"
+    },
+    "author": "鲸落",
+    "license": "ISC",
+    "workspaces": [
+        "packages/*"
+    ],
+    "devDependencies": {
+        "@commitlint/cli": "^19.5.0",
+        "@commitlint/config-conventional": "^19.5.0",
+        "concurrently": "^9.0.1",
+        "husky": "^9.1.6",
+        "lerna": "^8.1.8"
+    }
 }
