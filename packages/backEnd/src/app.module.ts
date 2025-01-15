@@ -1,4 +1,4 @@
-import { MiddlewareConsumer, Module, RequestMethod } from '@nestjs/common'
+import { MiddlewareConsumer, Module } from '@nestjs/common'
 import { AppController } from './app.controller'
 import { AppService } from './app.service'
 import { AuthModule } from './api/auth/auth.module'
@@ -12,15 +12,17 @@ import { LoginGuard } from './guards/auth.guard'
 import { PrismaModule } from './global/mysql/prisma.module'
 import { RedisModule } from './global/redis/redis.module'
 import { StoreModule } from './global/store/store.module'
-import { UserModule } from './api/user/user.module';
-import { PagesModule } from './api/pages/pages.module';
-import { PageJsonModule } from './api/page_json/page_json.module';
+import { UserModule } from './api/user/user.module'
+import { PagesModule } from './api/pages/pages.module'
+import { PageJsonModule } from './api/page_json/page_json.module'
+
 @Module({
   imports: [
-    AuthModule,
     PrismaModule,
     RedisModule,
     StoreModule,
+    // api模块
+    AuthModule,
     StaticonfigModule,
     ProjectModule,
     UserModule,
