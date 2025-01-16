@@ -1,15 +1,12 @@
 import { Inject, Injectable } from '@nestjs/common'
 import Redis from 'ioredis'
 
-/**
- * Redis 工具类
- * @author kbws
- * @date 2025/1/15
- */
 @Injectable()
-export class RedisUtil<V> {
+export class RedisService<V> {
   // 注入 Redis
-  constructor(@Inject('RedisService') private readonly redisClient: Redis) {}
+  constructor(
+    @Inject('RedisClientConnect') private readonly redisClient: Redis,
+  ) {}
 
   /**
    * 删除缓存

@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common'
+import { Injectable } from '@nestjs/common'
 import { EmailCodeDto, LoginDto, RegisterOrForgetDto } from './dto/auth.dto'
 import { createTransport, Transporter } from 'nodemailer'
 import * as fs from 'fs'
@@ -12,8 +12,8 @@ import { PrismaService } from '@/global/mysql/prisma.service'
 import { ResultUtil } from '@/common/ResultUtil'
 import { BusinessException } from '@/expection/business.exception'
 import { ErrorCode } from '@/common/ErrorCode'
-import { RedisUtil } from '@/redis/RedisUtil'
-import { RedisComment } from '@/redis/RedisComment'
+import { RedisService } from '@/global/redis/redis.service'
+import { RedisComment } from '@/global/redis/redis.comment'
 
 @Injectable()
 export class AuthService {
@@ -24,8 +24,8 @@ export class AuthService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly jwtService: JwtService,
-    @Inject('RedisService') private readonly redisUtil: RedisUtil<string>,
-    @Inject('RedisComment') private readonly redisComment: RedisComment,
+    private readonly redisService: RedisService<string>,
+    private readonly redisComment: RedisComment,
   ) {
     this.transporter = createTransport({
       host: 'smtp.qq.com', // smtp服务的域名
@@ -92,7 +92,7 @@ export class AuthService {
     }
 
     await this.sendEmailCodeFun(emailCode, code)
-    await this.redisUtil.setex(email, code, this.validity * 60)
+    await this.redisService.setex(email, code, this.validity * 60)
 
     return ResultUtil.success('发送成功，请注意查收您的邮箱')
   }
@@ -111,7 +111,7 @@ export class AuthService {
       return ResultUtil.success(message, 'info')
     }
 
-    const redisCode = await this.redisUtil.get(email)
+    const redisCode = await this.redisService.get(email)
     if (!redisCode || redisCode !== emailCode)
       throw new BusinessException(
         ErrorCode.PARAMS_ERROR.code,
@@ -143,7 +143,7 @@ export class AuthService {
     }
 
     // 删除图形验证码
-    await this.redisUtil.delete(email)
+    await this.redisService.delete(email)
 
     return ResultUtil.success(returnMsg, 'success')
   }
@@ -159,11 +159,13 @@ export class AuthService {
     if (userRes.password !== password)
       throw new BusinessException(ErrorCode.OPERATION_ERROR.code, '密码错误')
 
+    const { user_id } = userRes
+
     const token = this.jwtService.sign({
-      user_id: userRes.user_id,
+      user_id,
     })
 
-    this.redisComment.saveUserInfo(token, userRes)
+    this.redisComment.saveUserInfo(user_id, userRes)
 
     // 遗留的问题：token无感刷新
 

@@ -15,12 +15,14 @@ import { StoreModule } from './global/store/store.module'
 import { UserModule } from './api/user/user.module'
 import { PagesModule } from './api/pages/pages.module'
 import { PageJsonModule } from './api/page_json/page_json.module'
+import { LoggerModule } from './global/logger/logger.module'
 
 @Module({
   imports: [
     PrismaModule,
     RedisModule,
     StoreModule,
+    LoggerModule,
     // api模块
     AuthModule,
     StaticonfigModule,

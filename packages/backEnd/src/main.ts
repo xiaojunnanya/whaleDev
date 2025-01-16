@@ -6,7 +6,6 @@ import GlobalExceptionFilter from './expection/exception.filter'
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule)
-
   // 全局异常过滤器应该最先注册
   app.useGlobalFilters(new GlobalExceptionFilter())
 

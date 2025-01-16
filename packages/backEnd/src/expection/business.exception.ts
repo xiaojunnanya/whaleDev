@@ -12,6 +12,7 @@ export class BusinessException extends HttpException {
   constructor(errorCode: ErrorCode)
   constructor(errorCode: ErrorCode, message: string)
   constructor(codeOrErrorCode: number | ErrorCode, message?: string) {
+    console.log('BusinessException')
     let code: number
     let msg: string
     if (typeof codeOrErrorCode === 'number') {

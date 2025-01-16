@@ -76,17 +76,17 @@ export class LoginGuard implements CanActivate {
     }
   }
 
-  async userInfoAuth(user_id: string) {
-    const res = await this.prisma.user.findUnique({
-      where: {
-        user_id,
-      },
-    })
+  // async userInfoAuth(user_id: string) {
+  //   const res = await this.prisma.user.findUnique({
+  //     where: {
+  //       user_id,
+  //     },
+  //   })
 
-    if (!res) {
-      throw new UnauthorizedException('用户身份信息错误，请重新登录')
-    } else {
-      return res
-    }
-  }
+  //   if (!res) {
+  //     throw new UnauthorizedException('用户身份信息错误，请重新登录')
+  //   } else {
+  //     return res
+  //   }
+  // }
 }

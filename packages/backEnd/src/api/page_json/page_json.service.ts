@@ -2,14 +2,10 @@ import { Injectable } from '@nestjs/common'
 import { savePageJsonDto } from './dto/page_json.dtp'
 import { PrismaService } from '@/global/mysql/prisma.service'
 import { customResponse } from '@/interceptor/response.interceptor'
-import { StoreService } from '@/global/store/store.service'
 
 @Injectable()
 export class PageJsonService {
-  constructor(
-    private readonly prisma: PrismaService,
-    private readonly store: StoreService,
-  ) {}
+  constructor(private readonly prisma: PrismaService) {}
 
   async savePageJson(data: savePageJsonDto) {
     const { page_id, page_json } = data

@@ -1,5 +1,4 @@
 import { PrismaService } from '@/global/mysql/prisma.service'
-import { StoreService } from '@/global/store/store.service'
 import { Injectable } from '@nestjs/common'
 import { createPageDto, updatePageDto } from './dto/pages.dto'
 import { v4 as uuidv4 } from 'uuid'
@@ -7,10 +6,7 @@ import { customResponse } from '@/interceptor/response.interceptor'
 
 @Injectable()
 export class PagesService {
-  constructor(
-    private readonly prisma: PrismaService,
-    private readonly store: StoreService,
-  ) {}
+  constructor(private readonly prisma: PrismaService) {}
 
   private readonly selectData = {
     id: true,

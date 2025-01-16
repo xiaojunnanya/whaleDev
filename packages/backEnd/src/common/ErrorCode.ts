@@ -22,6 +22,7 @@ export class ErrorCode {
   readonly message: string
 
   private constructor(code: number, message: string) {
+    console.log('ErrorCode')
     this.code = code
     this.message = message
   }
